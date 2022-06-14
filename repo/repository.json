@@ -4,61 +4,20 @@
       "description": "A utility to import documents from a database system using Solr",
       "versions": [
         {
-          "version": "8.10.0",
-          "date": "2021-10-16",
+          "version": "9.0.0",
+          "date": "2022-06-14",
           "artifacts": [
             {
-              "url": "data-import-handler-8.10.0.jar",
-              "sig": "ggich+cAREadydwCVHnf/HalMBVaYz9EIyqrBl1KUfcBQidsr5C9nbi0xVCH/foOTyPRzK66l7ImWQyayhz0NQ=="
+              "url": "data-import-handler-9.0.0.jar",
+              "sig": "hFnltTf+qvJipJxo0EDUeNYPq2EK6mlBgF6BQoBV93pV/EtyuJp5WKk2zXSzjDYApPhnsDLybjXaDSwI3B5RsA=="
             },
             {
               "url": "mariadb-java-client-2.6.0.jar",
-              "sig": "SfYkFEkpqNfytOeGYNTSB0VD1sNLvTFQR9oCRv+e2y6GzawaZHBGo+9nKrZJ/4MUDVxQLfOiyaEJyQOI8Y+L7A=="
+              "sig": "LvJwQiZwqGQgeV0yXe2zsGcWFg8Wcbt5J8b0A6NJwIIDYfaLDbLOxFmvUQ8f1U038OUsZMmDAjWJySqofzUZfQ=="
             }
           ],
           "manifest": {
-              "version-constraint": "8.6-8.99",
-              "plugins": [
-                {
-                  "name": "request-handler",
-                  "setup-command": {
-                    "path": "/api/collections/${collection}/config",
-                    "payload": {"add-requesthandler": {"name": "${RH-HANDLER-PATH}", "class": "data-import-handler:org.apache.solr.handler.dataimport.DataImportHandler", "defaults": {"config": "data-config.xml"} } },
-                    "method": "POST"
-                  },
-                  "uninstall-command": {
-                    "path": "/api/collections/${collection}/config",
-                    "payload": {"delete-requesthandler": "${RH-HANDLER-PATH}"},
-                    "method": "POST"
-                  },
-                  "verify-command": {
-                    "path": "/api/collections/${collection}/config/requestHandler?componentName=${RH-HANDLER-PATH}&meta=true",
-                    "method": "GET",
-                    "condition": "$['config'].['requestHandler'].['${RH-HANDLER-PATH}'].['_packageinfo_'].['version']",
-                    "expected": "${package-version}"
-                  }
-                }
-              ],
-              "parameter-defaults": {
-                "RH-HANDLER-PATH": "/dataimport"
-              }
-          }        
-        },
-        {
-          "version": "8.6.0",
-          "date": "2020-07-02",
-          "artifacts": [
-            {
-              "url": "data-import-handler-8.6.0.jar",
-              "sig": "mH6VVyBu0TQ3oIDH01FSVHzI0lAPI7+Eu4TtdFtV+JtYfC7LFKRs0nyiWE1Gs2U/L9dXm5/At08jkG0CgASN2A=="
-            },
-            {
-              "url": "mariadb-java-client-2.6.0.jar",
-              "sig": "SfYkFEkpqNfytOeGYNTSB0VD1sNLvTFQR9oCRv+e2y6GzawaZHBGo+9nKrZJ/4MUDVxQLfOiyaEJyQOI8Y+L7A=="
-            }
-          ],
-          "manifest": {
-              "version-constraint": "8.6",
+              "version-constraint": "9.0",
               "plugins": [
                 {
                   "name": "request-handler",
