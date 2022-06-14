@@ -40,6 +40,7 @@ import org.apache.solr.metrics.SolrMetricsContext;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.RawResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.security.AuthorizationContext;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorChain;
 import org.apache.solr.util.plugin.SolrCoreAware;
@@ -303,7 +304,7 @@ public class DataImportHandler extends RequestHandlerBase implements
         map.put(DataImporter.MSG.TOTAL_DOCS_SKIPPED, cumulative.skipDocCount);
       }
     });
-    solrMetricsContext.gauge(this, metrics, true, "importer", getCategory().toString(), scope);
+    solrMetricsContext.gauge(metrics, true, "importer", getCategory().toString(), scope);
   }
 
   // //////////////////////SolrInfoMBeans methods //////////////////////
@@ -311,6 +312,11 @@ public class DataImportHandler extends RequestHandlerBase implements
   @Override
   public String getDescription() {
     return DataImporter.MSG.JMX_DESC;
+  }
+
+  @Override
+  public Name getPermissionName(AuthorizationContext request) {
+    return Name.ALL;
   }
 
   public static final String ENABLE_DEBUG = "enableDebug";

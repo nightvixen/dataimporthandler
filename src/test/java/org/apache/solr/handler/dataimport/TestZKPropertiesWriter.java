@@ -18,7 +18,9 @@ package org.apache.solr.handler.dataimport;
 
 import java.lang.invoke.MethodHandles;
 
+import org.apache.commons.io.FileUtils;
 import java.nio.file.Path;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 public class TestZKPropertiesWriter extends AbstractDataImportHandlerTestCase {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final String ROOT_DIR = "dih" + File.separator + "solr" + File.separator;
   protected static ZkTestServer zkServer;
 
   protected static Path zkDir;
@@ -52,9 +55,16 @@ public class TestZKPropertiesWriter extends AbstractDataImportHandlerTestCase {
 
   private String dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSSS";
 
+  public static String getSolrXmlFile() {
+    return ROOT_DIR + "solr.xml";
+  }
+
   @BeforeClass
   public static void dihZk_beforeClass() throws Exception {
     zkDir = createTempDir("zkData");
+
+    FileUtils.copyFile(getFile(getSolrXmlFile()), new File(zkDir.toFile(), "solr.xml"));
+    System.setProperty("solr.default.confdir", zkDir.toString());
     zkServer = new ZkTestServer(zkDir);
     zkServer.run();
 
@@ -62,7 +72,7 @@ public class TestZKPropertiesWriter extends AbstractDataImportHandlerTestCase {
     System.setProperty("zkHost", zkServer.getZkAddress());
     System.setProperty("jetty.port", "0000");
 
-    zkServer.buildZooKeeper(getFile("dih/solr"),
+    zkServer.buildZooKeeper(getFile("dih/solr").toPath(),
         "dataimport-solrconfig.xml", "dataimport-schema.xml");
 
     //initCore("solrconfig.xml", "schema.xml", getFile("dih/solr").getAbsolutePath());
@@ -95,6 +105,7 @@ public class TestZKPropertiesWriter extends AbstractDataImportHandlerTestCase {
 
   @SuppressForbidden(reason = "Needs currentTimeMillis to construct date stamps")
   @Test
+  @SuppressWarnings({"unchecked"})
   public void testZKPropertiesWriter() throws Exception {
     // test using ZooKeeper
     assertTrue("Not using ZooKeeper", h.getCoreContainer().isZooKeeperAware());
@@ -121,6 +132,7 @@ public class TestZKPropertiesWriter extends AbstractDataImportHandlerTestCase {
     props.put("last_index_time", oneSecondAgo);
     spw.persist(props);
 
+    @SuppressWarnings({"rawtypes"})
     List rows = new ArrayList();
     rows.add(createMap("id", "1", "year_s", "2013"));
     MockDataSource.setIterator("select " + df.format(oneSecondAgo) + " from dummy", rows.iterator());

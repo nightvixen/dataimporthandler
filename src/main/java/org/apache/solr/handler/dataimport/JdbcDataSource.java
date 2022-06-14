@@ -21,7 +21,6 @@ import static org.apache.solr.handler.dataimport.DataImportHandlerException.wrap
 import static org.apache.solr.handler.dataimport.DataImportHandlerException.SEVERE;
 
 import org.apache.solr.common.SolrException;
-import org.apache.solr.util.CryptoKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +34,13 @@ import java.io.Reader;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * <p> A DataSource implementation which can fetch data using JDBC. </p> <p> Refer to <a
@@ -127,7 +129,7 @@ public class JdbcDataSource extends
           props.putAll(initProps);
           String password = null;
           try {
-            password = CryptoKeys.decodeAES(initProps.getProperty("password"), new String(chars, 0, len)).trim();
+            password = Util.decodeAES(initProps.getProperty("password"), new String(chars, 0, len)).trim();
           } catch (SolrException se) {
             throw new DataImportHandlerException(SEVERE, "Error decoding password", se.getCause());
           }
